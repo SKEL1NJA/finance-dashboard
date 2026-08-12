@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Accounts{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">Accounts</h1>
+    <a href="{% url 'account-create' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Add account</a>
+</div>
+
+{% if accounts %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for account in accounts %}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="flex justify-between items-start">
+            <div>
+                <h2 class="font-semibold">{{ account.name }}</h2>
+                <p class="text-xs text-gray-500">{{ account.get_account_type_display }}</p>
+            </div>
+            {% if not account.is_active %}
+            <span class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">Inactive</span>
+            {% endif %}
+        </div>
+        <p class="text-2xl font-bold mt-4">{{ account.currency.symbol }}{{ account.current_balance }}</p>
+        <div class="flex gap-3 mt-4 text-sm">
+            <a href="{% url 'account-update' account.pk %}" class="text-indigo-600 hover:underline">Edit</a>
+            <a href="{% url 'account-delete' account.pk %}" class="text-red-600 hover:underline">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-500">No accounts yet. <a href="{% url 'account-create' %}" class="text-indigo-600">Add your first one.</a></p>
+{% endif %}
+{% endblock %}
