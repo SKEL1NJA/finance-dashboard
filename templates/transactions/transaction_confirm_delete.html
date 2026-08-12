@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Delete Transaction{% endblock %}
+{% block content %}
+<div class="max-w-md bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
+    <h1 class="text-xl font-semibold mb-4">Delete this transaction?</h1>
+    <p class="text-sm text-gray-500 mb-6">{{ object.description|default:object.category }} — {{ object.account.currency.symbol }}{{ object.amount }} on {{ object.date }}. The account balance will be reverted.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="flex gap-3">
+            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700">Delete</button>
+            <a href="{% url 'transaction-list' %}" class="px-4 py-2 rounded-lg text-sm border border-gray-300 dark:border-gray-600">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
