@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Finance Dashboard{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        }
+    </script>
+</head>
+<body class="h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    {% if user.is_authenticated %}
+    <nav class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-6">
+            <span class="font-semibold text-lg">Finance Dashboard</span>
+            <a href="{% url 'dashboard' %}" class="text-sm text-gray-600 dark:text-gray-300 hover:text-indigo-600">Dashboard</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <button onclick="toggleTheme()" class="text-sm px-3 py-1 rounded border border-gray-300 dark:border-gray-600">Toggle theme</button>
+            <span class="text-sm text-gray-500">{{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="text-sm text-red-600 hover:underline">Log out</button>
+            </form>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for message in messages %}
+            <div class="px-4 py-3 rounded-lg text-sm {% if message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200{% else %}bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark')
+            localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+        }
+    </script>
+</body>
+</html>
