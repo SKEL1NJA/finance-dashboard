@@ -4,6 +4,8 @@ from accounts.models import Account
 
 from .models import Category, Transaction
 
+from .categorization import suggest_category
+
 INPUT_CLASSES = 'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'
 
 
@@ -37,6 +39,7 @@ class TransactionForm(forms.ModelForm):
         account = cleaned_data.get('account')
         transfer_account = cleaned_data.get('transfer_account')
         category = cleaned_data.get('category')
+        description = cleaned_data.get('description')
 
         if transaction_type == 'transfer':
             if not transfer_account:
@@ -44,7 +47,12 @@ class TransactionForm(forms.ModelForm):
             elif account and transfer_account == account:
                 self.add_error('transfer_account', 'Transfer destination must differ from the source account.')
         elif not category:
-            self.add_error('category', 'Category is required for income and expense transactions.')
+            suggested = suggest_category(self.user, description)
+            if suggested:
+                cleaned_data['category'] = suggested
+                self.instance.category = suggested
+            else:
+                self.add_error('category', 'Category is required for income and expense transactions.')
 
         return cleaned_data
 

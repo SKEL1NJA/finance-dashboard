@@ -7,6 +7,7 @@ from .models import AuditLog
 TRACKED_MODELS = [
     'accounts.Account',
     'transactions.Transaction',
+    'transactions.CategorizationRule',
     'budgets.Budget',
     'goals.SavingsGoal',
 ]

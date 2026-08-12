@@ -86,8 +86,14 @@ class Transaction(SoftDeleteModel):
         RecurringTransaction, on_delete=models.SET_NULL, null=True, blank=True, related_name='generated_transactions'
     )
 
+class CategorizationRule(SoftDeleteModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='categorization_rules')
+    keyword = models.CharField(max_length=100)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='rules')
+    priority = models.PositiveSmallIntegerField(default=0)
+
     class Meta:
-        ordering = ['-date', '-created_at']
+        ordering = ['-priority', 'keyword']
 
     def __str__(self):
-        return f'{self.transaction_type} {self.amount} on {self.date}'
+        return f'"{self.keyword}" → {self.category.name}'
