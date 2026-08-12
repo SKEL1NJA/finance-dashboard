@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load budget_extras %}
+{% block title %}Budgets{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">Budgets</h1>
+    <a href="{% url 'budget-create' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Add budget</a>
+</div>
+
+{% if budgets %}
+<div class="space-y-4">
+    {% for budget in budgets %}
+    {% with progress=budget_progress|dictsort:"0" %}{% endwith %}
+    {% with p=budget_progress|get_item:budget.pk %}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="flex items-center justify-between mb-2">
+            <div>
+                <h2 class="font-semibold">{{ budget.category.name }}</h2>
+                <p class="text-xs text-gray-500">{{ budget.get_period_display }} · {{ p.period_start }} to {{ p.period_end }}</p>
+            </div>
+            <div class="text-sm space-x-2">
+                <a href="{% url 'budget-update' budget.pk %}" class="text-indigo-600 hover:underline">Edit</a>
+                <a href="{% url 'budget-delete' budget.pk %}" class="text-red-600 hover:underline">Delete</a>
+            </div>
+        </div>
+
+        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div class="h-3 rounded-full {% if p.is_over_budget %}bg-red-600{% elif p.is_over_threshold %}bg-amber-500{% else %}bg-green-500{% endif %}"
+                 style="width: {{ p.percentage }}%"></div>
+        </div>
+
+        <div class="flex justify-between mt-2 text-sm">
+            <span>₹{{ p.spent }} of ₹{{ budget.amount }} spent</span>
+            <span class="{% if p.is_over_budget %}text-red-600 font-medium{% elif p.is_over_threshold %}text-amber-600 font-medium{% else %}text-gray-500{% endif %}">
+                {{ p.percentage }}%
+            </span>
+        </div>
+
+        {% if p.is_over_budget %}
+        <p class="text-red-600 text-xs mt-2 font-medium">⚠ Over budget by ₹{{ p.spent|add:"-1"|add:"1" }}</p>
+        {% elif p.is_over_threshold %}
+        <p class="text-amber-600 text-xs mt-2 font-medium">⚠ Approaching limit — {{ p.percentage }}% used</p>
+        {% endif %}
+    </div>
+    {% endwith %}
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-500">No budgets yet. <a href="{% url 'budget-create' %}" class="text-indigo-600">Set your first one.</a></p>
+{% endif %}
+{% endblock %}
