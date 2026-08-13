@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Recurring Transactions{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">Recurring Transactions</h1>
+    <a href="{% url 'recurring-create' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Add recurring</a>
+</div>
+
+{% if recurring_transactions %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+    <table class="w-full text-sm">
+        <thead class="bg-gray-50 dark:bg-gray-700 text-left">
+            <tr>
+                <th class="px-4 py-3">Description</th>
+                <th class="px-4 py-3">Account</th>
+                <th class="px-4 py-3">Frequency</th>
+                <th class="px-4 py-3">Next due</th>
+                <th class="px-4 py-3 text-right">Amount</th>
+                <th class="px-4 py-3"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in recurring_transactions %}
+            <tr class="border-t border-gray-100 dark:border-gray-700">
+                <td class="px-4 py-3">{{ r.description|default:r.category }}</td>
+                <td class="px-4 py-3">{{ r.account.name }}</td>
+                <td class="px-4 py-3 capitalize">{{ r.frequency }}</td>
+                <td class="px-4 py-3">{{ r.next_due_date }}</td>
+                <td class="px-4 py-3 text-right">{{ r.account.currency.symbol }}{{ r.amount }}</td>
+                <td class="px-4 py-3 text-right space-x-2">
+                    <a href="{% url 'recurring-update' r.pk %}" class="text-indigo-600 hover:underline">Edit</a>
+                    <a href="{% url 'recurring-delete' r.pk %}" class="text-red-600 hover:underline">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-gray-500">No recurring transactions yet. <a href="{% url 'recurring-create' %}" class="text-indigo-600">Add your first one.</a></p>
+{% endif %}
+{% endblock %}

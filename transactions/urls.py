@@ -5,6 +5,7 @@ from .category_views import (
     RuleCreateView, RuleDeleteView,
 )
 from .views import TransactionCreateView, TransactionDeleteView, TransactionListView, TransactionUpdateView, TransactionExportView, TransactionImportView
+from .recurring_views import RecurringCreateView, RecurringDeleteView, RecurringListView, RecurringUpdateView
 
 urlpatterns = [
     path('transactions/', TransactionListView.as_view(), name='transaction-list'),
@@ -19,4 +20,8 @@ urlpatterns = [
     path('categories/<int:pk>/delete/', CategoryDeleteView.as_view(), name='category-delete'),
     path('rules/new/', RuleCreateView.as_view(), name='rule-create'),
     path('rules/<int:pk>/delete/', RuleDeleteView.as_view(), name='rule-delete'),
+    path('recurring/', RecurringListView.as_view(), name='recurring-list'),
+    path('recurring/new/', RecurringCreateView.as_view(), name='recurring-create'),
+    path('recurring/<int:pk>/edit/', RecurringUpdateView.as_view(), name='recurring-update'),
+    path('recurring/<int:pk>/delete/', RecurringDeleteView.as_view(), name='recurring-delete'),
 ]
