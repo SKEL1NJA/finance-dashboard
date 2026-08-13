@@ -1,6 +1,85 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-semibold mb-4">Welcome, {{ user.username }}</h1>
-<p class="text-gray-500">Your dashboard will appear here.</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<h1 class="text-2xl font-semibold mb-6">Welcome, {{ user.username }}</h1>
+
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6 mb-6">
+    <p class="text-sm text-gray-500">Net Worth</p>
+    <p class="text-4xl font-bold mt-1">₹{{ net_worth }}</p>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+        <h2 class="font-semibold mb-4">Income vs Expense (Last 6 Months)</h2>
+        <canvas id="trendChart"></canvas>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+        <h2 class="font-semibold mb-4">Spending by Category (This Month)</h2>
+        <canvas id="categoryChart"></canvas>
+    </div>
+</div>
+
+<script>
+    const trendData = {{ monthly_trend|safe }};
+    const categoryData = {{ category_breakdown|safe }};
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? '#374151' : '#e5e7eb';
+    const textColor = isDark ? '#d1d5db' : '#374151';
+
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: trendData.labels,
+            datasets: [
+                {
+                    label: 'Income',
+                    data: trendData.income,
+                    borderColor: '#22c55e',
+                    backgroundColor: '#22c55e33',
+                    tension: 0.3,
+                },
+                {
+                    label: 'Expense',
+                    data: trendData.expense,
+                    borderColor: '#ef4444',
+                    backgroundColor: '#ef444433',
+                    tension: 0.3,
+                },
+            ],
+        },
+        options: {
+            scales: {
+                x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                y: { ticks: { color: textColor }, grid: { color: gridColor } },
+            },
+            plugins: { legend: { labels: { color: textColor } } },
+        },
+    });
+
+    if (categoryData.labels.length > 0) {
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: categoryData.labels,
+                datasets: [{
+                    data: categoryData.values,
+                    backgroundColor: categoryData.colors,
+                }],
+            },
+            options: {
+                plugins: { legend: { labels: { color: textColor } } },
+            },
+        });
+    } else {
+        document.getElementById('categoryChart').replaceWith(
+            Object.assign(document.createElement('p'), {
+                className: 'text-sm text-gray-500',
+                textContent: 'No expenses recorded this month yet.',
+            })
+        );
+    }
+</script>
 {% endblock %}
