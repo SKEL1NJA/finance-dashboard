@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from core.admin import SoftDeleteAdminMixin
+
 from .models import Account, Currency
 
 
@@ -9,7 +11,7 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 
 @admin.register(Account)
-class AccountAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user', 'account_type', 'currency', 'current_balance', 'is_active')
-    list_filter = ('account_type', 'is_active', 'currency')
+class AccountAdmin(SoftDeleteAdminMixin, admin.ModelAdmin):
+    list_display = ('name', 'user', 'account_type', 'currency', 'current_balance', 'is_active', 'is_deleted_display')
+    list_filter = ('account_type', 'is_active', 'currency', 'is_deleted')
     search_fields = ('name', 'user__username')
