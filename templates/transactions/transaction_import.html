@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Import Transactions{% endblock %}
+{% block content %}
+<div class="max-w-lg">
+    <h1 class="text-2xl font-semibold mb-6">Import Transactions</h1>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow space-y-4">
+        <p class="text-sm text-gray-500">
+            CSV must have columns: <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">date</code>,
+            <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">account</code>,
+            <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">category</code>,
+            <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">transaction_type</code>,
+            <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">amount</code>,
+            <code class="text-xs bg-gray-100 dark:bg-gray-700 px-1 rounded">description</code>.
+            Date format: YYYY-MM-DD. Account and category names must match existing records exactly.
+        </p>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <input type="file" name="csv_file" accept=".csv" class="text-sm">
+            <div class="flex gap-3">
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Import</button>
+                <a href="{% url 'transaction-list' %}" class="px-4 py-2 rounded-lg text-sm border border-gray-300 dark:border-gray-600">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

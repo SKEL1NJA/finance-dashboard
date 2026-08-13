@@ -4,13 +4,15 @@ from .category_views import (
     CategoryCreateView, CategoryDeleteView, CategoryListView, CategoryUpdateView,
     RuleCreateView, RuleDeleteView,
 )
-from .views import TransactionCreateView, TransactionDeleteView, TransactionListView, TransactionUpdateView
+from .views import TransactionCreateView, TransactionDeleteView, TransactionListView, TransactionUpdateView, TransactionExportView, TransactionImportView
 
 urlpatterns = [
     path('transactions/', TransactionListView.as_view(), name='transaction-list'),
     path('transactions/new/', TransactionCreateView.as_view(), name='transaction-create'),
     path('transactions/<int:pk>/edit/', TransactionUpdateView.as_view(), name='transaction-update'),
     path('transactions/<int:pk>/delete/', TransactionDeleteView.as_view(), name='transaction-delete'),
+    path('transactions/export/', TransactionExportView.as_view(), name='transaction-export'),
+    path('transactions/import/', TransactionImportView.as_view(), name='transaction-import'),
     path('categories/', CategoryListView.as_view(), name='category-list'),
     path('categories/new/', CategoryCreateView.as_view(), name='category-create'),
     path('categories/<int:pk>/edit/', CategoryUpdateView.as_view(), name='category-update'),
