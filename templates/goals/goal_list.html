@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Savings Goals{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-semibold">Savings Goals</h1>
+    <a href="{% url 'goal-create' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">Add goal</a>
+</div>
+
+{% if goals %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for goal in goals %}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+        <div class="flex items-center justify-between mb-1">
+            <h2 class="font-semibold">{{ goal.name }}</h2>
+            {% if goal.is_achieved %}
+            <span class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded">Achieved</span>
+            {% endif %}
+        </div>
+        {% if goal.target_date %}
+        <p class="text-xs text-gray-500 mb-3">Target date: {{ goal.target_date }}</p>
+        {% endif %}
+
+        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div class="h-3 rounded-full bg-indigo-600" style="width: {{ goal.progress_percentage }}%"></div>
+        </div>
+
+        <div class="flex justify-between mt-2 text-sm">
+            <span>₹{{ goal.current_amount }} of ₹{{ goal.target_amount }}</span>
+            <span class="text-gray-500">{{ goal.progress_percentage }}%</span>
+        </div>
+
+        {% if goal.linked_account %}
+        <p class="text-xs text-gray-400 mt-2">Linked to {{ goal.linked_account.name }}</p>
+        {% endif %}
+
+        <div class="flex gap-3 mt-4 text-sm">
+            {% if not goal.is_achieved %}
+            <a href="{% url 'goal-contribute' goal.pk %}" class="text-green-600 hover:underline">Add funds</a>
+            {% endif %}
+            <a href="{% url 'goal-update' goal.pk %}" class="text-indigo-600 hover:underline">Edit</a>
+            <a href="{% url 'goal-delete' goal.pk %}" class="text-red-600 hover:underline">Delete</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-gray-500">No savings goals yet. <a href="{% url 'goal-create' %}" class="text-indigo-600">Set your first one.</a></p>
+{% endif %}
+{% endblock %}
